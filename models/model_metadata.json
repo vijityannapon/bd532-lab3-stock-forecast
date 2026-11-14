@@ -1,0 +1,251 @@
+{
+  "model_version": "stock-lstm-v2-seq-20261113",
+  "feature_version": "v2-seq",
+  "algorithm": "lstm",
+  "architecture": "LSTM 2 layers, hidden 64, dropout 0.2 → quantile head",
+  "parameters": 58005,
+  "training": {
+    "loss": "pinball (quantile) loss",
+    "optimizer": "AdamW",
+    "lr": 0.001,
+    "batch": 256,
+    "epochs": 3,
+    "early_stopping_patience": 5,
+    "seed": 42,
+    "device": "cuda"
+  },
+  "input": {
+    "name": "x",
+    "shape": [
+      "batch",
+      60,
+      9
+    ],
+    "seq_len": 60,
+    "features": [
+      "ret_1",
+      "hl_range",
+      "volume_z_20",
+      "vol_20",
+      "sma_ratio_20",
+      "rsi_14",
+      "mkt_ret_1",
+      "mkt_vol_20",
+      "rel_ret_20"
+    ]
+  },
+  "output": {
+    "name": "q",
+    "shape": [
+      "batch",
+      7,
+      3
+    ],
+    "meaning": "quantiles of z_h = log(Close[t+h]/Close[t]) / (vol_20 * sqrt(h))"
+  },
+  "scaler": {
+    "mean": [
+      0.0007220236002467573,
+      0.019919898360967636,
+      -0.018467308953404427,
+      0.01576763205230236,
+      0.0072915456257760525,
+      0.5425818562507629,
+      0.00041497815982438624,
+      0.009426048956811428,
+      0.006160429213196039
+    ],
+    "std": [
+      0.01834351010620594,
+      0.013435004279017448,
+      1.0556246042251587,
+      0.009482898749411106,
+      0.042790208011865616,
+      0.16739718616008759,
+      0.011386697180569172,
+      0.006498296279460192,
+      0.0631953701376915
+    ]
+  },
+  "tickers": [
+    "AAPL",
+    "MSFT",
+    "NVDA",
+    "AMZN",
+    "GOOGL",
+    "JPM",
+    "XOM",
+    "JNJ",
+    "WMT",
+    "KO"
+  ],
+  "market": "^GSPC",
+  "horizons": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "data": {
+    "source": "Yahoo Finance via yfinance (auto_adjust=False, Close split-adjusted only)",
+    "start": "2015-01-02",
+    "last_close_date": "2026-11-13",
+    "trained_until": "2026-11-04"
+  },
+  "splits": {
+    "train": {
+      "start": "2015-04-28",
+      "end": "2024-10-25",
+      "samples": 23920
+    },
+    "valid": {
+      "start": "2024-11-06",
+      "end": "2025-10-27",
+      "samples": 2430
+    },
+    "test": {
+      "start": "2025-11-06",
+      "end": "2026-11-04",
+      "samples": 2500
+    },
+    "purge_days": 7
+  },
+  "metrics": {
+    "valid_summary": {
+      "naive": {
+        "%err เฉลี่ย": 2.5112,
+        "ชนะ naive (%)": 0.0,
+        "ทิศถูก": null,
+        "coverage 80% (ยังไม่ปรับ)": null,
+        "เวลาเทรน (วินาที)": 0.0
+      },
+      "hgb": {
+        "%err เฉลี่ย": 2.5317,
+        "ชนะ naive (%)": -0.6375,
+        "ทิศถูก": 0.5467,
+        "coverage 80% (ยังไม่ปรับ)": null,
+        "เวลาเทรน (วินาที)": 5.9701
+      },
+      "lstm": {
+        "%err เฉลี่ย": 2.4822,
+        "ชนะ naive (%)": 1.0536,
+        "ทิศถูก": 0.5653,
+        "coverage 80% (ยังไม่ปรับ)": 0.7798,
+        "เวลาเทรน (วินาที)": 11.492
+      },
+      "transformer": {
+        "%err เฉลี่ย": 2.4971,
+        "ชนะ naive (%)": 0.4242,
+        "ทิศถูก": 0.5406,
+        "coverage 80% (ยังไม่ปรับ)": 0.7764,
+        "เวลาเทรน (วินาที)": 4.8596
+      }
+    },
+    "test": {
+      "1": {
+        "naive %err": 1.3044,
+        "hgb %err": 1.309,
+        "lstm %err": 1.3088,
+        "ทิศถูก": 0.5184,
+        "coverage ก่อนปรับ": 0.7756,
+        "coverage 80%": 0.7772,
+        "ชนะ naive (%)": -0.3403
+      },
+      "2": {
+        "naive %err": 1.9051,
+        "hgb %err": 1.9129,
+        "lstm %err": 1.9097,
+        "ทิศถูก": 0.5284,
+        "coverage ก่อนปรับ": 0.7692,
+        "coverage 80%": 0.782,
+        "ชนะ naive (%)": -0.2408
+      },
+      "3": {
+        "naive %err": 2.3394,
+        "hgb %err": 2.3658,
+        "lstm %err": 2.3466,
+        "ทิศถูก": 0.5376,
+        "coverage ก่อนปรับ": 0.762,
+        "coverage 80%": 0.7788,
+        "ชนะ naive (%)": -0.3076
+      },
+      "4": {
+        "naive %err": 2.7143,
+        "hgb %err": 2.7465,
+        "lstm %err": 2.7264,
+        "ทิศถูก": 0.546,
+        "coverage ก่อนปรับ": 0.762,
+        "coverage 80%": 0.7984,
+        "ชนะ naive (%)": -0.4469
+      },
+      "5": {
+        "naive %err": 3.0366,
+        "hgb %err": 3.0839,
+        "lstm %err": 3.0629,
+        "ทิศถูก": 0.5436,
+        "coverage ก่อนปรับ": 0.7636,
+        "coverage 80%": 0.7988,
+        "ชนะ naive (%)": -0.8646
+      },
+      "6": {
+        "naive %err": 3.3351,
+        "hgb %err": 3.3766,
+        "lstm %err": 3.3607,
+        "ทิศถูก": 0.5588,
+        "coverage ก่อนปรับ": 0.7732,
+        "coverage 80%": 0.7964,
+        "ชนะ naive (%)": -0.7696
+      },
+      "7": {
+        "naive %err": 3.5956,
+        "hgb %err": 3.6528,
+        "lstm %err": 3.6253,
+        "ทิศถูก": 0.558,
+        "coverage ก่อนปรับ": 0.7712,
+        "coverage 80%": 0.8008,
+        "ชนะ naive (%)": -0.8266
+      }
+    }
+  },
+  "interval": {
+    "level": 0.8,
+    "quantiles": [
+      0.1,
+      0.5,
+      0.9
+    ],
+    "cqr": {
+      "1": 0.004693484399467707,
+      "2": 0.0462711863219738,
+      "3": 0.054142601788043976,
+      "4": 0.09313744306564331,
+      "5": 0.08263656497001648,
+      "6": 0.07270638644695282,
+      "7": 0.06997423619031906
+    },
+    "test_coverage": {
+      "1": 0.7772,
+      "2": 0.782,
+      "3": 0.7788,
+      "4": 0.7984,
+      "5": 0.7988,
+      "6": 0.7964,
+      "7": 0.8008
+    }
+  },
+  "min_history_days": 100,
+  "versions": {
+    "python": "3.13.16",
+    "torch": "2.14.1+cu130",
+    "onnx": "1.23.2",
+    "onnxruntime": "1.32.0",
+    "pandas": "3.1.1",
+    "numpy": "2.4.6",
+    "yfinance": "1.8.0"
+  },
+  "exported_at": "2026-11-14T07:19:12+00:00",
+  "disclaimer": "Educational use only. Not investment advice."
+}

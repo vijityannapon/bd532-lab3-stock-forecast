@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BD532 · S&amp;P 500 7-day close forecast</title>
+<style>
+  :root {
+    --bg: #f6f7f9; --card: #fff; --ink: #1d2433; --muted: #667085; --line: #e4e7ec;
+    --accent: #2563eb; --band: rgba(37, 99, 235, .14); --up: #067647; --down: #b42318;
+    --ok-bg: #ecfdf3; --ok: #067647; --bad-bg: #fef3f2; --bad: #b42318; --warn-bg: #fffaeb; --warn: #b54708;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink);
+         font: 15px/1.55 system-ui, -apple-system, "Segoe UI", "Noto Sans Thai", "Sarabun", sans-serif; }
+  main { max-width: 1080px; margin: 0 auto; padding: 24px 16px 48px; }
+  h1 { font-size: 1.45rem; margin: 0 0 4px; }
+  h2 { font-size: 1.05rem; margin: 0 0 12px; }
+  .sub { color: var(--muted); margin: 0 0 18px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 16px; margin-bottom: 16px; }
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; }
+  .stat .k { color: var(--muted); font-size: .8rem; }
+  .stat .v { font-weight: 600; font-size: 1.02rem; overflow-wrap: anywhere; }
+  .pill { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: .82rem; font-weight: 600; }
+  .ok { background: var(--ok-bg); color: var(--ok); } .bad { background: var(--bad-bg); color: var(--bad); }
+  .warn { background: var(--warn-bg); color: var(--warn); }
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+  th, td { padding: 8px 10px; border-bottom: 1px solid var(--line); text-align: right; white-space: nowrap; }
+  th:first-child, td:first-child { text-align: left; }
+  th { color: var(--muted); font-weight: 600; font-size: .82rem; }
+  tbody tr.pick { cursor: pointer; } tbody tr.pick:hover { background: #f2f6ff; }
+  tbody tr.sel { background: #e8efff; }
+  .up { color: var(--up); } .down { color: var(--down); }
+  .row { display: flex; gap: 12px; align-items: center; justify-content: space-between; flex-wrap: wrap; margin-bottom: 8px; }
+  select { font: inherit; padding: 4px 8px; border-radius: 8px; border: 1px solid var(--line); }
+  #chart { width: 100%; height: 320px; display: block; }
+  .legend { display: flex; gap: 16px; color: var(--muted); font-size: .82rem; flex-wrap: wrap; }
+  .sw { display: inline-block; width: 18px; height: 10px; vertical-align: middle; margin-right: 6px; border-radius: 2px; }
+  .note { color: var(--muted); font-size: .85rem; margin: 8px 0 0; }
+  .alert { padding: 10px 12px; border-radius: 8px; margin-bottom: 12px; }
+  footer { color: var(--muted); font-size: .82rem; }
+  #tip { position: fixed; pointer-events: none; background: #1d2433; color: #fff; font-size: .8rem;
+         padding: 6px 8px; border-radius: 6px; display: none; white-space: nowrap; }
+</style>
+</head>
+<body>
+<main>
+  <h1>ทำนายราคาปิดหุ้น S&amp;P 500 ล่วงหน้า 7 วันทำการ</h1>
+  <p class="sub">อัปเดตอัตโนมัติทุกวันทำการ 07:20 น. เวลานิวยอร์ก (ก่อนตลาดเปิด 09:30) ด้วย GitHub Actions · BD532 Lab 3.2</p>
+
+  <div id="alerts"></div>
+
+  <section class="card stats" id="stats"><div class="stat"><div class="k">สถานะ</div><div class="v">กำลังโหลด…</div></div></section>
+
+  <section class="card">
+    <h2>สรุปคำทำนาย</h2>
+    <div class="table-wrap"><table id="summary"></table></div>
+    <p class="note">คลิกแถวเพื่อดูกราฟ · ช่วง 80% คือช่วงที่ราคาจริงควรตกอยู่ภายใน 8 ใน 10 ครั้ง (ตรวจได้ในหัวข้อความแม่นยำจริงด้านล่าง)</p>
+  </section>
+
+  <section class="card">
+    <div class="row">
+      <h2 style="margin:0">ราคาปิด 60 วันล่าสุดและคำทำนาย</h2>
+      <select id="pick" aria-label="เลือกหุ้น"></select>
+    </div>
+    <svg id="chart" role="img" aria-label="กราฟราคาและคำทำนาย"></svg>
+    <div class="legend">
+      <span><i class="sw" style="background:#1d2433"></i>ราคาปิดจริง</span>
+      <span><i class="sw" style="background:var(--accent)"></i>คำทำนาย</span>
+      <span><i class="sw" style="background:var(--band)"></i>ช่วงคาดการณ์ 80%</span>
+    </div>
+    <div class="table-wrap" style="margin-top:12px"><table id="detail"></table></div>
+  </section>
+
+  <section class="card">
+    <h2>ความแม่นยำจริงหลัง deploy</h2>
+    <div class="table-wrap"><table id="monitor"></table></div>
+    <p class="note" id="monnote"></p>
+  </section>
+
+  <footer>
+    <p><b>ใช้เพื่อการศึกษาเท่านั้น ไม่ใช่คำแนะนำการลงทุน</b> ข้อมูลราคาจาก Yahoo Finance ผ่าน yfinance อาจล่าช้าหรือคลาดเคลื่อน
+    โมเดลไม่รู้ข่าว ประกาศงบ หรือเหตุการณ์ในอนาคต</p>
+    <p id="modelinfo"></p>
+  </footer>
+</main>
+<div id="tip"></div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const fmt = (x, d = 2) => x == null ? "–" : Number(x).toLocaleString("en-US", { minimumFractionDigits: d, maximumFractionDigits: d });
+const pct = (a, b) => (a / b - 1) * 100;
+const signed = (x) => `<span class="${x >= 0 ? "up" : "down"}">${x >= 0 ? "+" : ""}${fmt(x)}%</span>`;
+const inTz = (iso, tz) => new Date(iso).toLocaleString("th-TH", { timeZone: tz, dateStyle: "medium", timeStyle: "short" });
+let DATA, SELECTED;
+
+async function load(name) {
+  const r = await fetch(`data/${name}?t=${Date.now()}`, { cache: "no-store" });   // กันเบราว์เซอร์ใช้ไฟล์เก่า
+  if (!r.ok) throw new Error(`${name}: HTTP ${r.status}`);
+  return r.json();
+}
+
+function renderStats(d) {
+  const hours = (Date.now() - new Date(d.generated_at)) / 36e5;
+  const fresh = hours <= 80;            // 80 ชม. ครอบคลุมเสาร์-อาทิตย์ + วันหยุด 1 วัน
+  const status = fresh ? `<span class="pill ok">อัปเดตแล้ว</span>`
+                       : `<span class="pill bad">ไม่อัปเดตเกิน ${Math.floor(hours / 24)} วัน</span>`;
+  $("stats").innerHTML = [
+    ["สถานะ", status],
+    ["ราคาปิดล่าสุดที่ใช้ (as_of)", d.as_of],
+    ["ทำนายวันที่", `${d.target_dates[0]} → ${d.target_dates.at(-1)}`],
+    ["สร้างเมื่อ (เวลาไทย)", inTz(d.generated_at, "Asia/Bangkok")],
+    ["สร้างเมื่อ (เวลานิวยอร์ก)", inTz(d.generated_at, "America/New_York")],
+    ["โมเดล", d.model.version],
+  ].map(([k, v]) => `<div class="stat"><div class="k">${k}</div><div class="v">${v}</div></div>`).join("");
+  if (!fresh) addAlert("bad", "ข้อมูลไม่ได้อัปเดตตามกำหนด ตรวจแท็บ Actions ของ repository ว่างานตั้งเวลาล้มเหลวหรือถูกปิดหรือไม่");
+  if (d.source !== "yahoo-finance") addAlert("warn", `หน้านี้สร้างจากไฟล์ทดสอบ (${d.source}) ไม่ใช่ข้อมูลจริงจากตลาด`);
+  (d.warnings || []).forEach((w) => addAlert("warn", w));
+}
+
+function addAlert(kind, text) {
+  $("alerts").insertAdjacentHTML("beforeend", `<div class="alert ${kind}">${text}</div>`);
+}
+
+function renderSummary(d) {
+  const lvl = Math.round(d.model.interval_level * 100);
+  const head = `<thead><tr><th>หุ้น</th><th>ปิดล่าสุด</th><th>วันทำการถัดไป (h1)</th><th>+7 วันทำการ (h7)</th>
+    <th>เปลี่ยน h7</th><th>ช่วง ${lvl}% ของ h7</th></tr></thead>`;
+  const body = d.tickers.map((t) => {
+    const f1 = t.forecast[0], f7 = t.forecast.at(-1);
+    return `<tr class="pick" data-t="${t.ticker}"><td><b>${t.ticker}</b></td><td>${fmt(t.last_close)}</td>
+      <td>${fmt(f1.pred)}</td><td>${fmt(f7.pred)}</td><td>${signed(pct(f7.pred, t.last_close))}</td>
+      <td>${fmt(f7.lo)} – ${fmt(f7.hi)}</td></tr>`;
+  }).join("");
+  $("summary").innerHTML = head + `<tbody>${body}</tbody>`;
+  $("summary").querySelectorAll("tr.pick").forEach((tr) => tr.onclick = () => select(tr.dataset.t));
+}
+
+function select(ticker) {
+  SELECTED = DATA.tickers.find((t) => t.ticker === ticker);
+  $("pick").value = ticker;
+  $("summary").querySelectorAll("tr.pick").forEach((tr) => tr.classList.toggle("sel", tr.dataset.t === ticker));
+  drawChart(SELECTED);
+  $("detail").innerHTML = `<thead><tr><th>h</th><th>วันที่</th><th>ทำนาย</th><th>ต่ำ</th><th>สูง</th><th>เทียบปิดล่าสุด</th></tr></thead><tbody>` +
+    SELECTED.forecast.map((f) => `<tr><td>${f.h}</td><td>${f.date}</td><td>${fmt(f.pred)}</td><td>${fmt(f.lo)}</td>
+      <td>${fmt(f.hi)}</td><td>${signed(pct(f.pred, SELECTED.last_close))}</td></tr>`).join("") + `</tbody>`;
+}
+
+function drawChart(t) {
+  const svg = $("chart"), W = svg.clientWidth || 800, H = 320, m = { l: 56, r: 16, t: 12, b: 30 };
+  const hist = t.history.dates.map((d, i) => ({ d, y: t.history.close[i] }));
+  const last = hist.at(-1);
+  const fc = [{ d: last.d, y: last.y, lo: last.y, hi: last.y }, ...t.forecast.map((f) => ({ d: f.date, y: f.pred, lo: f.lo, hi: f.hi }))];
+  const xs = [...hist.map((p) => p.d), ...t.forecast.map((f) => f.date)];       // แกน x = ลำดับวันทำการ
+  const ix = (d) => xs.indexOf(d);
+  const ys = [...hist.map((p) => p.y), ...fc.flatMap((p) => [p.lo, p.hi])];
+  let lo = Math.min(...ys), hi = Math.max(...ys); const pad = (hi - lo) * 0.08 || 1; lo -= pad; hi += pad;
+  const X = (i) => m.l + (i / (xs.length - 1)) * (W - m.l - m.r);
+  const Y = (v) => m.t + (1 - (v - lo) / (hi - lo)) * (H - m.t - m.b);
+  const path = (pts, key = "y") => pts.map((p, k) => `${k ? "L" : "M"}${X(ix(p.d)).toFixed(1)},${Y(p[key]).toFixed(1)}`).join("");
+  const band = path(fc, "hi") + fc.slice().reverse().map((p) => `L${X(ix(p.d)).toFixed(1)},${Y(p.lo).toFixed(1)}`).join("") + "Z";
+  const ticks = Array.from({ length: 5 }, (_, k) => lo + (k / 4) * (hi - lo));
+  const xt = W < 600 ? [0, Math.floor(hist.length / 2), xs.length - 1]
+                     : [0, Math.floor(hist.length / 3), Math.floor(2 * hist.length / 3), hist.length - 1, xs.length - 1];
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  svg.innerHTML = `
+    ${ticks.map((v) => `<line x1="${m.l}" x2="${W - m.r}" y1="${Y(v)}" y2="${Y(v)}" stroke="#eef0f3"/>
+      <text x="${m.l - 8}" y="${Y(v) + 4}" font-size="11" text-anchor="end" fill="#667085">${fmt(v)}</text>`).join("")}
+    ${xt.map((i) => `<text x="${X(i)}" y="${H - 8}" font-size="11" text-anchor="middle" fill="#667085">${xs[i].slice(5)}</text>`).join("")}
+    <line x1="${X(hist.length - 1)}" x2="${X(hist.length - 1)}" y1="${m.t}" y2="${H - m.b}" stroke="#c9ced6" stroke-dasharray="3 3"/>
+    <path d="${band}" fill="var(--band)"/>
+    <path d="${path(hist)}" fill="none" stroke="#1d2433" stroke-width="1.6"/>
+    <path d="${path(fc)}" fill="none" stroke="var(--accent)" stroke-width="2" stroke-dasharray="5 3"/>
+    ${fc.slice(1).map((p) => `<circle cx="${X(ix(p.d))}" cy="${Y(p.y)}" r="3" fill="var(--accent)"/>`).join("")}
+    <rect id="hover" x="${m.l}" y="${m.t}" width="${W - m.l - m.r}" height="${H - m.t - m.b}" fill="transparent"/>`;
+  const tip = $("tip");
+  svg.querySelector("#hover").onmousemove = (e) => {
+    const r = svg.getBoundingClientRect(), sx = (e.clientX - r.left) * (W / r.width);
+    const i = Math.max(0, Math.min(xs.length - 1, Math.round(((sx - m.l) / (W - m.l - m.r)) * (xs.length - 1))));
+    const f = t.forecast.find((q) => q.date === xs[i]);
+    tip.innerHTML = f ? `${xs[i]} · ทำนาย ${fmt(f.pred)} (${fmt(f.lo)}–${fmt(f.hi)})` : `${xs[i]} · ปิด ${fmt(hist[i].y)}`;
+    tip.style.display = "block"; tip.style.left = `${e.clientX + 12}px`; tip.style.top = `${e.clientY - 28}px`;
+  };
+  svg.querySelector("#hover").onmouseleave = () => tip.style.display = "none";
+}
+
+function renderMonitor(mon) {
+  const lvl = Math.round(mon.interval_level * 100);
+  $("monitor").innerHTML = `<thead><tr><th>h</th><th>จำนวนที่ครบกำหนด</th><th>%err โมเดล</th><th>%err naive</th>
+    <th>ชนะ naive</th><th>coverage ${lvl}%</th><th>ทิศถูก</th><th>%err ตอน test</th><th>coverage ตอน test</th></tr></thead><tbody>` +
+    mon.by_horizon.map((r) => `<tr><td>${r.h}</td><td>${r.n}</td><td>${fmt(r.model_err, 3)}</td><td>${fmt(r.naive_err, 3)}</td>
+      <td>${r.skill_vs_naive == null ? "–" : signed(r.skill_vs_naive)}</td><td>${r.coverage == null ? "–" : fmt(r.coverage * 100, 0) + "%"}</td>
+      <td>${r.direction_acc == null ? "–" : fmt(r.direction_acc * 100, 0) + "%"}</td>
+      <td>${fmt(r.test_model_err, 3)}</td><td>${r.test_coverage == null ? "–" : fmt(r.test_coverage * 100, 0) + "%"}</td></tr>`).join("") + `</tbody>`;
+  $("monnote").textContent = mon.n_matured === 0
+    ? "ยังไม่มีคำทำนายที่ถึงวันเป้าหมาย ตัวเลขจะเริ่มขึ้นหลังวันทำการถัดไป (h1) และครบทุก h หลัง 7 วันทำการ"
+    : `เทียบคำทำนายที่เผยแพร่แล้ว ${mon.n_matured} รายการกับราคาปิดจริง · %err = |ทำนาย − จริง| / จริง · naive = ทายว่าราคาเท่าราคาปิดล่าสุด · คอลัมน์ "ตอน test" คือค่าที่วัดตอนเทรน (Lab 3.1)`;
+  (mon.alerts || []).forEach((a) => addAlert("bad", a));
+}
+
+(async () => {
+  try {
+    DATA = await load("latest.json");
+    renderStats(DATA);
+    renderSummary(DATA);
+    $("pick").innerHTML = DATA.tickers.map((t) => `<option>${t.ticker}</option>`).join("");
+    $("pick").onchange = (e) => select(e.target.value);
+    select(DATA.tickers[0].ticker);
+    addEventListener("resize", () => SELECTED && drawChart(SELECTED));
+    $("modelinfo").textContent = `โมเดล ${DATA.model.version} — ${DATA.model.architecture || DATA.model.algorithm} · เทรนด้วยข้อมูลถึง ${DATA.model.trained_until} · ช่วง test ${DATA.model.test_period.join(" → ")}`;
+    renderMonitor(await load("monitoring.json"));
+  } catch (err) {
+    $("stats").innerHTML = `<div class="stat"><div class="k">สถานะ</div><div class="v"><span class="pill bad">โหลดข้อมูลไม่ได้</span></div></div>`;
+    addAlert("bad", `ยังไม่มีไฟล์ผลทำนาย (${err.message}) — รัน predict.py หรือรอ workflow ทำงานครั้งแรก`);
+  }
+})();
+</script>
+</body>
+</html>
