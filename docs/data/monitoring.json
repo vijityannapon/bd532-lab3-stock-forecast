@@ -1,0 +1,51 @@
+{
+ "n_matured": 0,
+ "coverage_all": null,
+ "interval_level": 0.8,
+ "by_horizon": [
+  {
+   "h": 1,
+   "n": 0,
+   "test_model_err": 1.3088,
+   "test_coverage": 0.7772
+  },
+  {
+   "h": 2,
+   "n": 0,
+   "test_model_err": 1.9097,
+   "test_coverage": 0.782
+  },
+  {
+   "h": 3,
+   "n": 0,
+   "test_model_err": 2.3466,
+   "test_coverage": 0.7788
+  },
+  {
+   "h": 4,
+   "n": 0,
+   "test_model_err": 2.7264,
+   "test_coverage": 0.7984
+  },
+  {
+   "h": 5,
+   "n": 0,
+   "test_model_err": 3.0629,
+   "test_coverage": 0.7988
+  },
+  {
+   "h": 6,
+   "n": 0,
+   "test_model_err": 3.3607,
+   "test_coverage": 0.7964
+  },
+  {
+   "h": 7,
+   "n": 0,
+   "test_model_err": 3.6253,
+   "test_coverage": 0.8008
+  }
+ ],
+ "alerts": [],
+ "updated_at": "2026-11-14T07:55:41+00:00"
+}
