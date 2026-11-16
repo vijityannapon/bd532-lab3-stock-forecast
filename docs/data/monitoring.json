@@ -1,13 +1,18 @@
 {
- "n_matured": 0,
- "coverage_all": null,
+ "n_matured": 10,
+ "coverage_all": 0.5,
  "interval_level": 0.8,
  "by_horizon": [
   {
    "h": 1,
-   "n": 0,
+   "n": 10,
    "test_model_err": 1.3088,
-   "test_coverage": 0.7772
+   "test_coverage": 0.7772,
+   "model_err": 2.067,
+   "naive_err": 2.033,
+   "coverage": 0.5,
+   "direction_acc": 0.2,
+   "skill_vs_naive": -1.67
   },
   {
    "h": 2,
@@ -47,5 +52,5 @@
   }
  ],
  "alerts": [],
- "updated_at": "2026-11-14T07:55:41+00:00"
+ "updated_at": "2026-11-16T22:18:15+00:00"
 }
