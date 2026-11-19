@@ -1,35 +1,40 @@
 {
- "n_matured": 30,
+ "n_matured": 60,
  "coverage_all": 0.633,
  "interval_level": 0.8,
  "by_horizon": [
   {
    "h": 1,
-   "n": 20,
+   "n": 30,
    "test_model_err": 1.3088,
    "test_coverage": 0.7772,
-   "model_err": 1.547,
-   "naive_err": 1.506,
-   "coverage": 0.65,
-   "direction_acc": 0.2,
-   "skill_vs_naive": -2.72
+   "model_err": 1.604,
+   "naive_err": 1.57,
+   "coverage": 0.7,
+   "direction_acc": 0.267,
+   "skill_vs_naive": -2.17
   },
   {
    "h": 2,
-   "n": 10,
+   "n": 20,
    "test_model_err": 1.9097,
    "test_coverage": 0.782,
-   "model_err": 3.055,
-   "naive_err": 2.882,
+   "model_err": 2.798,
+   "naive_err": 2.628,
    "coverage": 0.6,
-   "direction_acc": 0.0,
-   "skill_vs_naive": -6.0
+   "direction_acc": 0.05,
+   "skill_vs_naive": -6.47
   },
   {
    "h": 3,
-   "n": 0,
+   "n": 10,
    "test_model_err": 2.3466,
-   "test_coverage": 0.7788
+   "test_coverage": 0.7788,
+   "model_err": 3.825,
+   "naive_err": 3.674,
+   "coverage": 0.5,
+   "direction_acc": 0.1,
+   "skill_vs_naive": -4.11
   },
   {
    "h": 4,
@@ -56,6 +61,8 @@
    "test_coverage": 0.8008
   }
  ],
- "alerts": [],
- "updated_at": "2026-11-18T20:41:32+00:00"
+ "alerts": [
+  "coverage จริง 63% ต่ำกว่าเป้า 80% มาก — ช่วงคาดการณ์แคบเกินไป"
+ ],
+ "updated_at": "2026-11-19T20:48:09+00:00"
 }
