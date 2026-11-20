@@ -1,46 +1,51 @@
 {
- "n_matured": 60,
- "coverage_all": 0.633,
+ "n_matured": 100,
+ "coverage_all": 0.6,
  "interval_level": 0.8,
  "by_horizon": [
   {
    "h": 1,
-   "n": 30,
+   "n": 40,
    "test_model_err": 1.3088,
    "test_coverage": 0.7772,
-   "model_err": 1.604,
-   "naive_err": 1.57,
+   "model_err": 1.759,
+   "naive_err": 1.713,
    "coverage": 0.7,
-   "direction_acc": 0.267,
-   "skill_vs_naive": -2.17
+   "direction_acc": 0.2,
+   "skill_vs_naive": -2.69
   },
   {
    "h": 2,
-   "n": 20,
+   "n": 30,
    "test_model_err": 1.9097,
    "test_coverage": 0.782,
-   "model_err": 2.798,
-   "naive_err": 2.628,
+   "model_err": 2.899,
+   "naive_err": 2.698,
    "coverage": 0.6,
-   "direction_acc": 0.05,
-   "skill_vs_naive": -6.47
+   "direction_acc": 0.033,
+   "skill_vs_naive": -7.45
   },
   {
    "h": 3,
-   "n": 10,
+   "n": 20,
    "test_model_err": 2.3466,
    "test_coverage": 0.7788,
-   "model_err": 3.825,
-   "naive_err": 3.674,
-   "coverage": 0.5,
-   "direction_acc": 0.1,
-   "skill_vs_naive": -4.11
+   "model_err": 3.957,
+   "naive_err": 3.733,
+   "coverage": 0.55,
+   "direction_acc": 0.05,
+   "skill_vs_naive": -6.0
   },
   {
    "h": 4,
-   "n": 0,
+   "n": 10,
    "test_model_err": 2.7264,
-   "test_coverage": 0.7984
+   "test_coverage": 0.7984,
+   "model_err": 6.136,
+   "naive_err": 5.812,
+   "coverage": 0.3,
+   "direction_acc": 0.0,
+   "skill_vs_naive": -5.57
   },
   {
    "h": 5,
@@ -62,7 +67,7 @@
   }
  ],
  "alerts": [
-  "coverage จริง 63% ต่ำกว่าเป้า 80% มาก — ช่วงคาดการณ์แคบเกินไป"
+  "coverage จริง 60% ต่ำกว่าเป้า 80% มาก — ช่วงคาดการณ์แคบเกินไป"
  ],
- "updated_at": "2026-11-19T20:48:09+00:00"
+ "updated_at": "2026-11-20T20:31:24+00:00"
 }
