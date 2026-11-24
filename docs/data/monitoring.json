@@ -1,18 +1,18 @@
 {
- "n_matured": 200,
- "coverage_all": 0.595,
+ "n_matured": 260,
+ "coverage_all": 0.65,
  "interval_level": 0.8,
  "by_horizon": [
   {
    "h": 1,
-   "n": 50,
+   "n": 60,
    "test_model_err": 1.3088,
    "test_coverage": 0.7772,
-   "model_err": 2.126,
-   "naive_err": 2.082,
-   "coverage": 0.66,
-   "direction_acc": 0.24,
-   "skill_vs_naive": -2.11
+   "model_err": 2.065,
+   "naive_err": 2.032,
+   "coverage": 0.667,
+   "direction_acc": 0.317,
+   "skill_vs_naive": -1.62
   },
   {
    "h": 2,
@@ -27,57 +27,60 @@
   },
   {
    "h": 3,
-   "n": 40,
+   "n": 50,
    "test_model_err": 2.3466,
    "test_coverage": 0.7788,
-   "model_err": 4.231,
-   "naive_err": 3.98,
-   "coverage": 0.6,
-   "direction_acc": 0.1,
-   "skill_vs_naive": -6.31
+   "model_err": 3.848,
+   "naive_err": 3.649,
+   "coverage": 0.66,
+   "direction_acc": 0.2,
+   "skill_vs_naive": -5.45
   },
   {
    "h": 4,
-   "n": 30,
+   "n": 40,
    "test_model_err": 2.7264,
    "test_coverage": 0.7984,
-   "model_err": 5.457,
-   "naive_err": 5.135,
-   "coverage": 0.567,
-   "direction_acc": 0.1,
-   "skill_vs_naive": -6.27
+   "model_err": 4.675,
+   "naive_err": 4.41,
+   "coverage": 0.65,
+   "direction_acc": 0.175,
+   "skill_vs_naive": -6.01
   },
   {
    "h": 5,
-   "n": 20,
+   "n": 30,
    "test_model_err": 3.0629,
    "test_coverage": 0.7988,
-   "model_err": 6.49,
-   "naive_err": 6.158,
-   "coverage": 0.4,
-   "direction_acc": 0.1,
-   "skill_vs_naive": -5.39
+   "model_err": 5.128,
+   "naive_err": 4.795,
+   "coverage": 0.567,
+   "direction_acc": 0.133,
+   "skill_vs_naive": -6.94
   },
   {
    "h": 6,
-   "n": 10,
+   "n": 20,
    "test_model_err": 3.3607,
    "test_coverage": 0.7964,
-   "model_err": 4.988,
-   "naive_err": 4.755,
-   "coverage": 0.6,
+   "model_err": 4.087,
+   "naive_err": 3.791,
+   "coverage": 0.7,
    "direction_acc": 0.2,
-   "skill_vs_naive": -4.9
+   "skill_vs_naive": -7.81
   },
   {
    "h": 7,
-   "n": 0,
+   "n": 10,
    "test_model_err": 3.6253,
-   "test_coverage": 0.8008
+   "test_coverage": 0.8008,
+   "model_err": 5.197,
+   "naive_err": 4.791,
+   "coverage": 0.8,
+   "direction_acc": 0.1,
+   "skill_vs_naive": -8.47
   }
  ],
- "alerts": [
-  "coverage จริง 60% ต่ำกว่าเป้า 80% มาก — ช่วงคาดการณ์แคบเกินไป"
- ],
- "updated_at": "2026-11-24T00:02:23+00:00"
+ "alerts": [],
+ "updated_at": "2026-11-24T22:35:36+00:00"
 }
